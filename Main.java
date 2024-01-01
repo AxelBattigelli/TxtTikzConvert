@@ -141,9 +141,9 @@ public class Main {
                                 .append(".east)|-(aux")
                                 .append(extractValueAux(lines2[emplacement]))
                                 .append(".center)node[pos=1.3,align=center]{non}|-(aux")
-                                .append(extractValueAux(lines2[emplacement + nbConditional]))
+                                .append(extractValueAux(lines2[2 + emplacement * nbConditional]))
                                 .append(".center)|-(t")
-                                .append(extractValueT(lines2[emplacement + nbConditional]))
+                                .append(extractValueT(lines2[2 + emplacement * nbConditional]))
                                 .append(".east);\n");
                 drawTikzgenerate.append("\\draw [->](t")
                                 .append(extractValueT(lines2[emplacement + 3 * nbConditional]))
@@ -162,9 +162,9 @@ public class Main {
                                 .append(".east)|-(aux")
                                 .append(extractValueAux(lines2[emplacement]))
                                 .append(".center)node[pos=1.3,align=center]{non}|-(aux")
-                                .append(extractValueAux(lines2[emplacement + nbConditional]))
+                                .append(extractValueAux(lines2[2 + emplacement * nbConditional]))
                                 .append(".center)|-(t")
-                                .append(extractValueT(lines2[emplacement + nbConditional]))
+                                .append(extractValueT(lines2[2 + emplacement * nbConditional]))
                                 .append(".east);\n");
                 drawTikzgenerate.append("\\draw [->](t")
                                 .append(extractValueT(lines2[emplacement + 3 * nbConditional]))
@@ -190,10 +190,10 @@ public class Main {
     }
 
     private static String extractValueAux(String str) {
-        int indexOfT = str.indexOf("x");
-        int indexOfClosingBracket = str.indexOf(")", indexOfT);
+        int indexOfAux = str.indexOf("x");
+        int indexOfClosingBracket = str.indexOf(")", indexOfAux);
     
-        return str.substring(indexOfT + 1, indexOfClosingBracket);
+        return str.substring(indexOfAux + 1, indexOfClosingBracket);
     }
 
     private static String genererAuxLigne(StringBuilder codeTikzgenerate) {
