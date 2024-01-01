@@ -6,8 +6,11 @@
 ** Axel BATTIGELLI
 */
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
@@ -26,11 +29,26 @@ public class Main {
             String logigramme = genererLogigramme(algorithme);
             // Afficher le résultat en console
             System.out.println(logigramme);
+            // Ecrire dans le fichier output.txt
+            writeInFile(logigramme);
 
         } catch (FileNotFoundException e) {
-            System.out.println("Fichier introuvable : " + e.getMessage());
+            System.out.println("Une erreur est survenue : " + e.getMessage());
         }
-    }    
+    }
+
+    public static void writeInFile(String logigramme) throws FileNotFoundException {
+        try {
+            FileWriter fileWriter = new FileWriter("output.txt");
+            BufferedWriter writer = new BufferedWriter(fileWriter);
+
+            writer.write(logigramme);
+            writer.close();
+        } catch (IOException e) {
+            // Gérez l'exception IOException ici
+            e.printStackTrace();
+        }
+    }
 
     public static Vector<String> readfile(String filename) throws FileNotFoundException{
         Vector<String> allData = new Vector<>();
