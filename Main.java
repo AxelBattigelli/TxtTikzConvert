@@ -1,5 +1,5 @@
 /*
-** EPITECH PROJECT, 2023
+** EPITECH PROJECT, 2024
 ** main.java
 ** File description:
 ** Main file for reader file and converting algo
@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -136,7 +135,7 @@ public class Main {
         int emplacement = 0;
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].contains("#finttq")) {
-                drawTikzgenerate.append("\\draw [->](t")
+                drawTikzgenerate.append("\\draw [->] (t")
                                 .append(extractValueT(lines2[emplacement]))
                                 .append(".east)|-(aux")
                                 .append(extractValueAux(lines2[emplacement]))
@@ -157,7 +156,7 @@ public class Main {
                 emplacement++;
             }
             if (lines[i].contains("#finsi")) {
-                drawTikzgenerate.append("\\draw [->](t")
+                drawTikzgenerate.append("\\draw [->] (t")
                                 .append(extractValueT(lines2[emplacement]))
                                 .append(".east)|-(aux")
                                 .append(extractValueAux(lines2[emplacement]))
