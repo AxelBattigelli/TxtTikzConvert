@@ -13,6 +13,7 @@ It is a natural language code converter to Tikz code
 * Variable
 * tantque ... faire - fin tantque
 * si ... faire - fin si
+* pour ... faire - pour
 * Ecrire, Lire, ...
 
 #### Types of instructions
