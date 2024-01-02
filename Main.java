@@ -103,6 +103,7 @@ public class Main {
 
         codeTikzgenerate = new StringBuilder(codeTikzgenerate.toString().replace("#finttq#", ""));
         codeTikzgenerate = new StringBuilder(codeTikzgenerate.toString().replace("#finsi#", ""));
+        codeTikzgenerate = new StringBuilder(codeTikzgenerate.toString().replace("#finpour#", ""));
         codeTikz.append(codeTikzgenerate);
         codeTikz.append(auxTikzgenerate);
         codeTikz.append(drawTikzgenerate);
@@ -120,14 +121,14 @@ public class Main {
         String[] lines2 = auxTikzgenerate.toString().split("\n");
 
         for (int i = 0; i < lines.length - 1; i++) {
-            if (!lines[i].contains("\\textbullet") && !(lines[i + 1].contains("#finsi")) && !(lines[i + 1].contains("#finttq"))) {
+            if (!lines[i].contains("\\textbullet") && !(lines[i + 1].contains("#finsi")) && !(lines[i + 1].contains("#finttq")) && !(lines[i + 1].contains("#finpour"))) {
                 drawTikzgenerate.append("\\draw [->] (t").append(i + 1).append(".south) to (t").append(i + 2).append(".north);\n");
             }
         }
 
         int nbConditional = 0;
         for (int i = 0; i < lines.length; i++) {
-            if ((lines[i].contains("#finsi")) || (lines[i].contains("#finttq"))) {
+            if ((lines[i].contains("#finsi")) || (lines[i].contains("#finttq")) || (lines[i].contains("#finpour"))) {
                 nbConditional++;
             }
         }
@@ -144,7 +145,7 @@ public class Main {
                                 .append(".center)|-(t")
                                 .append(extractValueT(lines2[2 + emplacement * nbConditional]))
                                 .append(".east);\n");
-                drawTikzgenerate.append("\\draw [->](t")
+                drawTikzgenerate.append("\\draw [->] (t")
                                 .append(extractValueT(lines2[emplacement + 3 * nbConditional]))
                                 .append(".west)|-(aux")
                                 .append(extractValueAux(lines2[emplacement + 3 * nbConditional]))
@@ -165,11 +166,32 @@ public class Main {
                                 .append(".center)|-(t")
                                 .append(extractValueT(lines2[2 + emplacement * nbConditional]))
                                 .append(".east);\n");
-                drawTikzgenerate.append("\\draw [->](t")
+                drawTikzgenerate.append("\\draw [->] (t")
                                 .append(extractValueT(lines2[emplacement + 3 * nbConditional]))
                                 .append(".west)|-(aux")
                                 .append(extractValueAux(lines2[emplacement + 3 * nbConditional]))
                                 .append(".center)node[pos=1.3,align=center]{non}|-(aux")
+                                .append(extractValueAux(lines2[emplacement + 1 + nbConditional]))
+                                .append(".center)|-(t")
+                                .append(extractValueT(lines2[emplacement + 1 + nbConditional]))
+                                .append(".west);\n");
+                emplacement++;
+            }
+            if (lines[i].contains("#finpour")) {
+                drawTikzgenerate.append("\\draw [->] (t")
+                                .append(extractValueT(lines2[emplacement]))
+                                .append(".east)|-(aux")
+                                .append(extractValueAux(lines2[emplacement]))
+                                .append(".center)node[pos=1.3,align=center]{non}|-(aux")
+                                .append(extractValueAux(lines2[2 + emplacement * nbConditional]))
+                                .append(".center)|-(t")
+                                .append(extractValueT(lines2[2 + emplacement * nbConditional]))
+                                .append(".east);\n");
+                drawTikzgenerate.append("\\draw [->] (t")
+                                .append(extractValueT(lines2[emplacement + 3 * nbConditional]))
+                                .append(".west)|-(aux")
+                                .append(extractValueAux(lines2[emplacement + 3 * nbConditional]))
+                                .append(".center)-(aux")
                                 .append(extractValueAux(lines2[emplacement + 1 + nbConditional]))
                                 .append(".center)|-(t")
                                 .append(extractValueT(lines2[emplacement + 1 + nbConditional]))
@@ -265,6 +287,27 @@ public class Main {
             }
         }
 
+        // Pour in/out losange
+        for (String line : lines) {
+            int startIndex = line.indexOf("(t") + 2;
+            int endIndex = line.indexOf(")", startIndex);
+            
+            if (startIndex != -1 && endIndex != -1) {
+                String tracker = line.substring(startIndex, endIndex);
+    
+                // Vérifier si tracker est une valeur numérique
+                if (tracker.matches("\\d+")) {
+                    if (line.contains("Pour")) {
+                        // Générer du code TikZ en fonction de la présence de "Pour" dans la ligne
+                        auxTikzgenerate.append("\\node (aux").append(index).append(") [right = 4em of t").append(tracker).append("]{};\n");
+                        index++;
+                        auxTikzgenerate.append("\\node (aux").append(index).append(") [left = 4em of t").append(tracker).append("]{};\n");
+                        index++;
+                    }
+                }
+            }
+        }
+
         // sorties gauches des boucles
         for (String line : lines) {
             int startIndex = line.indexOf("(t") + 2;
@@ -283,6 +326,10 @@ public class Main {
                         auxTikzgenerate.append("\\node (aux").append(index).append(") [left = 4em of t").append(tracker).append("]{};\n");
                         index++;
                     }
+                    if (line.contains("#finpour")) {
+                        auxTikzgenerate.append("\\node (aux").append(index).append(") [left = 4em of t").append(Integer.parseInt(tracker) - 1).append("]{};\n");
+                        index++;
+                    }
                 }
             }
         }
@@ -299,6 +346,8 @@ public class Main {
             codeTikz.append("#finttq#");
         } else if (ligne.startsWith("Fin si")) {
             codeTikz.append("#finsi#");
+        } else if (ligne.startsWith("Fin pour")) {
+            codeTikz.append("#finpour#");
         } else if (ligne.startsWith("tantque")) {
             res = res.replace("faire", "");
             res = res.replace("tantque", "Tantque ");
@@ -317,6 +366,16 @@ public class Main {
             res = res.replace("!", "$!");
             codeTikz.append("\\node[losange] (t").append(t_value).append(") [below = of ").append(dernierePosition).append("] {" + res + "};\n");
             dernierePosition.replace(0, dernierePosition.length(), "t" + t_value + "");
+        } else if (ligne.startsWith("pour")) {
+            res = res.replace("faire", "");
+            res = res.replace("pour", "Pour ");
+            res = res.replace("<", "$<");
+            res = res.replace(">", "$>");
+            res = res.replace("=", "$=");
+            res = res.replace("!", "$!");
+            codeTikz.append("\\node[losange] (t").append(t_value).append(") [below = of ").append(dernierePosition).append("] {" + res + "};\n");
+            dernierePosition.replace(0, dernierePosition.length(), "t" + t_value + "");
+
         } else {
             if (!ligne.startsWith("Début") && !ligne.startsWith("Variable")) {
                 if (dernierePosition.toString().equals("(debut)")) {
